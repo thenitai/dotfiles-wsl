@@ -44,7 +44,7 @@ apt -y install mysql-server mysql-client
 # (courtesy of https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-ubuntu-16-04)
 apt -y install mongodb-org
 # Copy systemd file
-cp ../mongodb-systemd /etc/systemd/system/mongodb.service
+cp -pr ./mongodb-systemd /etc/systemd/system/mongodb.service
 # Unmask service (just in case)
 systemctl unmask mongodb
 
