@@ -1,0 +1,119 @@
+# Clone zgen if we haven't already
+if [ ! -f ~/zgen/zgen.zsh ]; then
+  pushd ~
+  git clone git@github.com:tarjoilija/zgen.git
+  popd
+fi
+source ~/zgen/zgen.zsh
+
+# if the init scipt doesn't exist
+if ! zgen saved; then
+
+  echo "creating a zgen save"
+  ZGEN_LOADED=()
+  ZGEN_COMPLETIONS=()
+
+  zgen oh-my-zsh
+
+  # Fish-like fast/unobtrusive autosuggestions for zsh.
+  # It suggests commands as you type, based on command history.
+  # autosuggestions should be loaded last
+  zgen load tarruda/zsh-autosuggestions
+  #zgen load ~/.zsh/zsh-autosuggestions/dist/autosuggestions.zsh
+  #zgen load ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+  # If zsh-syntax-highlighting is bundled after zsh-history-substring-search,
+  # they break, so get the order right.
+  zgen load zsh-users/zsh-syntax-highlighting
+
+  # Automatically run zgen update and zgen selfupdate every 7 days
+  zgen load unixorn/autoupdate-zgen
+
+  zgen load unixorn/jpb.zshplugin
+
+  # Warn you when you run a command that you've got an alias for
+  zgen load djui/alias-tips
+
+  # A collection of scripts that might be useful to sysadmins
+  zgen load skx/sysadmin-util
+
+  # Adds aliases to open your current repo & branch on github.
+  zgen load peterhurford/git-it-on.zsh
+
+  # Tom Limoncelli's tooling for storing private information (keys, etc)
+  # in a repository securely by encrypting them with gnupg
+  zgen load StackExchange/blackbox
+
+  # Load oh-my-zsh plugins
+
+  zgen oh-my-zsh plugins/brew
+  zgen oh-my-zsh plugins/sudo
+  # zgen oh-my-zsh plugins/aws
+  zgen oh-my-zsh plugins/brew
+  zgen oh-my-zsh plugins/git-extras
+  zgen oh-my-zsh plugins/colored-man-pages
+  zgen oh-my-zsh plugins/git
+  zgen oh-my-zsh plugins/github
+  zgen oh-my-zsh plugins/osx
+  zgen oh-my-zsh plugins/node
+  zgen oh-my-zsh plugins/npm
+  zgen oh-my-zsh plugins/git-flow
+  zgen oh-my-zsh plugins/sublime
+  # zgen oh-my-zsh plugins/vagrant
+  zgen oh-my-zsh plugins/copydir
+  zgen oh-my-zsh plugins/copyfile
+  # zgen oh-my-zsh plugins/ubuntu
+  zgen oh-my-zsh plugins/command-not-found
+  zgen oh-my-zsh plugins/taskwarrior
+  # zgen oh-my-zsh plugins/web-search
+  zgen oh-my-zsh plugins/wd
+  zgen oh-my-zsh plugins/history-substring-search
+  zgen oh-my-zsh plugins/history
+
+  # Load more completion files for zsh from the zsh-lovers github repo
+  zgen load zsh-users/zsh-completions src
+
+  # Docker completion
+  zgen load srijanshetty/docker-zsh
+
+  # Load me last
+  GENCOMPL_FPATH=$HOME/.zsh/complete
+
+  # k is a zsh script / plugin to make directory listings more readable,
+  # adding a bit of color and some git status information on files and directories
+  zgen load rimraf/k
+
+  # Bullet train prompt setup
+  zgen load caiogondim/bullet-train-oh-my-zsh-theme bullet-train
+
+  # Save it all to init script
+  zgen save
+
+fi
+
+# This comes from https://stackoverflow.com/questions/17878684/best-way-to-get-file-modified-time-in-seconds
+# This works on both Linux with GNU fileutils and OS X with BSD stat.
+get_file_modification_time() {
+  modified_time=$(stat -c %Y "$1" 2> /dev/null)
+  if [ "$?" -ne 0 ]; then
+    modified_time=$(stat -f %m "$1" 2> /dev/null)
+    if [ "$?" -ne 0 ]; then
+      modified_time=$(date -r "$1" +%s 2> /dev/null)
+      [ "$?" -ne 0 ] && modified_time=0
+    fi
+  fi
+  echo "$modified_time"
+}
+
+# check if there's an init.zsh file for zgen and generate one if not.
+if ! zgen saved; then
+  setup-zgen-repos
+fi
+
+# If .zgen-setup is newer than init.zsh, regenerate init.zsh
+if [ $(get_file_modification_time ${REAL_ZGEN_SETUP}) -gt $(get_file_modification_time ~/.zgen/init.zsh) ]; then
+  echo ".zgen-setup updated; creating a new init.zsh"
+  setup-zgen-repos
+fi
+
+

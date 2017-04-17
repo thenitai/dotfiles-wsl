@@ -1,0 +1,26 @@
+# Put your aliases in here
+# The script will create a links to .bash_aliases and for the ZSH shell also
+
+
+# ALIASES
+
+#Prevent tragedy
+alias   rm="rm -i"
+
+# Zsh previously had ll. Somehow this changed to work with less.
+# This changed it back again
+alias   ll="la"
+
+# NPM
+alias   npmo="npm outdated"
+alias   npmu="npm update"
+alias   npmi="npm install"
+
+# Apt
+alias   agu="sudo apt update"
+alias   agg="sudo apt upgrade"
+alias   agr="sudo apt autoremove"
+alias   agc="sudo apt autoclean"
+alias   agi="sudo apt install"
+alias   ap="sudo aptitude"
+
